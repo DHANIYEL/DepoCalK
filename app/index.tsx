@@ -1,15 +1,22 @@
 import React, { useMemo, useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 export default function Index() {
-  const [oldDeposit, setOldDeposit] = useState("201000");
-  const [oldLoan, setOldLoan] = useState("135000");
+  const [oldDeposit, setOldDeposit] = useState("");
+  const [oldLoan, setOldLoan] = useState("");
 
-  const [todayDeposit, setTodayDeposit] = useState("500");
-  const [todayLoan, setTodayLoan] = useState("3000");
-  const [interest, setInterest] = useState("480");
-  const [fine, setFine] = useState("150");
-  const [others, setOthers] = useState("100");
+  const [todayDeposit, setTodayDeposit] = useState("");
+  const [todayLoan, setTodayLoan] = useState("");
+  const [interest, setInterest] = useState("");
+  const [fine, setFine] = useState("");
+  const [others, setOthers] = useState("");
 
   const todayTotal = useMemo(() => {
     return (
@@ -21,232 +28,252 @@ export default function Index() {
     );
   }, [todayDeposit, todayLoan, interest, fine, others]);
 
-  const loanDepositBalance = useMemo(() => {
-    const depositBalance = Number(oldDeposit || 0) + Number(todayDeposit || 0);
+  const depositBalance = useMemo(() => {
+    return Number(oldDeposit || 0) + Number(todayDeposit || 0);
+  }, [oldDeposit, todayDeposit]);
 
-    const loanBalance = Number(oldLoan || 0) - Number(todayLoan || 0);
-
-    return {
-      depositBalance,
-      loanBalance,
-    };
-  }, [oldDeposit, oldLoan, todayDeposit, todayLoan]);
+  const loanBalance = useMemo(() => {
+    return Number(oldLoan || 0) - Number(todayLoan || 0);
+  }, [oldLoan, todayLoan]);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.heading}>Daily Collection</Text>
-
-      {/* Header */}
-      <View style={styles.row}>
-        <Text style={[styles.headerCell, styles.labelCell]}></Text>
-        <Text style={styles.headerCell}>Deposit</Text>
-        <Text style={styles.headerCell}>Loan</Text>
-        <Text style={styles.headerCell}>Interest</Text>
-        <Text style={styles.headerCell}>Fine</Text>
-        <Text style={styles.headerCell}>Others</Text>
-        <Text style={styles.headerCell}>Total</Text>
-      </View>
-
-      {/* Old Balance */}
-      <View style={styles.row}>
-        <Text style={[styles.labelCell, styles.labelText]}>
-          Old Balance Amount
-        </Text>
-
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={oldDeposit}
-          onChangeText={setOldDeposit}
-        />
-
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={oldLoan}
-          onChangeText={setOldLoan}
-        />
-
-        <View style={styles.emptyCell} />
-        <View style={styles.emptyCell} />
-        <View style={styles.emptyCell} />
-        <View style={styles.emptyCell} />
-      </View>
-
-      {/* Today's Amount */}
-      <View style={styles.row}>
-        <Text style={[styles.labelCell, styles.labelText]}>
-          Today&apos;s Amount
-        </Text>
-
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={todayDeposit}
-          onChangeText={setTodayDeposit}
-        />
-
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={todayLoan}
-          onChangeText={setTodayLoan}
-        />
-
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={interest}
-          onChangeText={setInterest}
-        />
-
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={fine}
-          onChangeText={setFine}
-        />
-
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={others}
-          onChangeText={setOthers}
-        />
-
-        <View style={styles.totalBox}>
-          <Text style={styles.totalText}>{todayTotal}</Text>
-        </View>
-      </View>
-
-      {/* Loan / Deposit Balance */}
-      <View style={[styles.row, styles.balanceRow]}>
-        <Text style={[styles.labelCell, styles.balanceLabel]}>
-          Loan / Deposit Balance
-        </Text>
-
-        <View style={styles.balanceCell}>
-          <Text style={styles.balanceValue}>
-            {loanDepositBalance.depositBalance}
-          </Text>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Daily Collection</Text>
+          <Text style={styles.subtitle}>Loan & Deposit Balance Calculator</Text>
         </View>
 
-        <View style={styles.balanceCell}>
-          <Text style={styles.balanceValue}>
-            {loanDepositBalance.loanBalance}
-          </Text>
+        {/* Old Balance */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Old Balance Amount</Text>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Deposit Balance</Text>
+            <TextInput
+              value={oldDeposit}
+              onChangeText={setOldDeposit}
+              keyboardType="numeric"
+              style={styles.input}
+              placeholder="Enter Deposit Balance"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Loan Balance</Text>
+            <TextInput
+              value={oldLoan}
+              onChangeText={setOldLoan}
+              keyboardType="numeric"
+              style={styles.input}
+              placeholder="Enter Loan Balance"
+            />
+          </View>
         </View>
 
-        <View style={styles.balanceEmpty} />
-        <View style={styles.balanceEmpty} />
-        <View style={styles.balanceEmpty} />
-        <View style={styles.balanceEmpty} />
-      </View>
-    </ScrollView>
+        {/* Today's Collection */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Today&apos;s Collection</Text>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Deposit</Text>
+            <TextInput
+              value={todayDeposit}
+              onChangeText={setTodayDeposit}
+              keyboardType="numeric"
+              style={styles.input}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Loan</Text>
+            <TextInput
+              value={todayLoan}
+              onChangeText={setTodayLoan}
+              keyboardType="numeric"
+              style={styles.input}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Interest</Text>
+            <TextInput
+              value={interest}
+              onChangeText={setInterest}
+              keyboardType="numeric"
+              style={styles.input}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Fine</Text>
+            <TextInput
+              value={fine}
+              onChangeText={setFine}
+              keyboardType="numeric"
+              style={styles.input}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Others</Text>
+            <TextInput
+              value={others}
+              onChangeText={setOthers}
+              keyboardType="numeric"
+              style={styles.input}
+            />
+          </View>
+        </View>
+
+        {/* Today's Total */}
+        <View style={styles.totalCard}>
+          <Text style={styles.totalLabel}>Today&apos;s Total Collection</Text>
+          <Text style={styles.totalValue}>₹ {todayTotal.toLocaleString()}</Text>
+        </View>
+
+        {/* Summary */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Balance Summary</Text>
+
+          <View style={styles.summaryRow}>
+            <View style={styles.summaryBox}>
+              <Text style={styles.summaryTitle}>Deposit Balance</Text>
+              <Text style={styles.depositValue}>
+                ₹ {depositBalance.toLocaleString()}
+              </Text>
+            </View>
+
+            <View style={styles.summaryBox}>
+              <Text style={styles.summaryTitle}>Loan Balance</Text>
+              <Text style={styles.loanValue}>
+                ₹ {loanBalance.toLocaleString()}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 15,
-    backgroundColor: "#fff",
-    flexGrow: 1,
-  },
-
-  heading: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 15,
-    textAlign: "center",
-  },
-
-  row: {
-    flexDirection: "row",
-  },
-
-  headerCell: {
+  safeArea: {
     flex: 1,
-    backgroundColor: "#d97706",
-    color: "#fff",
-    paddingVertical: 12,
-    textAlign: "center",
-    borderWidth: 1,
-    borderColor: "#000",
-    fontWeight: "bold",
+    backgroundColor: "#F4F7FC",
   },
 
-  labelCell: {
-    width: 130,
-    backgroundColor: "#d9e6f2",
-    justifyContent: "center",
-    paddingHorizontal: 5,
-    borderWidth: 1,
-    borderColor: "#000",
+  container: {
+    padding: 18,
   },
 
-  labelText: {
+  header: {
+    marginBottom: 20,
+  },
+
+  title: {
+    fontSize: 30,
+    fontWeight: "700",
+    color: "#1E293B",
+  },
+
+  subtitle: {
+    marginTop: 4,
+    fontSize: 15,
+    color: "#64748B",
+  },
+
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
+    padding: 18,
+    marginBottom: 18,
+    elevation: 4,
+  },
+
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1E293B",
+    marginBottom: 15,
+  },
+
+  inputGroup: {
+    marginBottom: 15,
+  },
+
+  label: {
+    fontSize: 14,
+    color: "#475569",
+    marginBottom: 6,
     fontWeight: "600",
   },
 
   input: {
-    flex: 1,
+    backgroundColor: "#F8FAFC",
     borderWidth: 1,
-    borderColor: "#000",
-    textAlign: "center",
-    paddingVertical: 10,
-    backgroundColor: "#f8f8f8",
+    borderColor: "#CBD5E1",
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 14,
+    fontSize: 18,
+    color: "#0F172A",
   },
 
-  emptyCell: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#000",
-    backgroundColor: "#f1f1f1",
-  },
-
-  totalBox: {
-    flex: 1,
-    backgroundColor: "red",
-    justifyContent: "center",
+  totalCard: {
+    backgroundColor: "#EF4444",
+    borderRadius: 18,
+    padding: 24,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#000",
+    marginBottom: 18,
+    elevation: 5,
   },
 
-  totalText: {
-    color: "#fff",
-    fontSize: 24,
+  totalLabel: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+
+  totalValue: {
+    color: "#FFF",
+    fontSize: 34,
     fontWeight: "bold",
+    marginTop: 10,
   },
 
-  balanceRow: {
-    backgroundColor: "#8bc34a",
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 12,
   },
 
-  balanceLabel: {
-    backgroundColor: "#8bc34a",
-    fontWeight: "bold",
-  },
-
-  balanceCell: {
+  summaryBox: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: "#000",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#8bc34a",
-    minHeight: 55,
+    padding: 16,
+    borderRadius: 14,
+    backgroundColor: "#F8FAFC",
   },
 
-  balanceValue: {
-    fontSize: 28,
-    fontWeight: "bold",
+  summaryTitle: {
+    fontSize: 14,
+    color: "#64748B",
+    marginBottom: 8,
   },
 
-  balanceEmpty: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#000",
-    backgroundColor: "#8bc34a",
+  depositValue: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#16A34A",
+  },
+
+  loanValue: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#DC2626",
   },
 });
